@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 
@@ -13,6 +12,8 @@ app.use(
         allowedHeaders: [ 'Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
     })
 );
+
 app.use('/', (req, res) => res.end());
+
 
 module.exports = app;

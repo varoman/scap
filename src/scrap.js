@@ -3,7 +3,7 @@ const { parse } = require('node-html-parser');
 const Handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
-const { send } = require('./mailing');
+const { sendMail } = require('./mailing');
 const { login_email, login_password } = process.env;
 
 
@@ -46,25 +46,29 @@ const scrap = async () => {
     });
 
     const fileBuffer = await newPage.screenshot();
-    await send(fileBuffer);
+    await sendMail(fileBuffer);
     await browser.close();
 
     console.log('finished scrapping...')
 }
 
 const generateList = (trs) => {
-    const values = [];
+
     const valuesSplicedBy3 = [];
-    for (let i = 0; i < trs.length; i += 2) {
-        values.push({
-            name: trs[i].rawText,
-            value: trs[i + 1].rawText,
-        });
-    }
+    const odds = trs.filter((_, i) => i % 2 !== 0);
+    const even = trs.filter((_, i) => i % 2 === 0);
+    const values = odds.map((it, i) => ({ name: it.rawText, value: even[i].rawText }));
+    // for (let i = 0; i < trs.length; i += 2) {
+    //     values.push({
+    //         name: trs[i].rawText,
+    //         value: trs[i + 1].rawText,
+    //     });
+    // }
     for (let i = 0; i < values.length; i += 3) {
         valuesSplicedBy3.push(values.slice(i, i + 3));
     }
     return valuesSplicedBy3;
 }
+
 
 module.exports.scrap = scrap;
