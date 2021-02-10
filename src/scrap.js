@@ -57,7 +57,7 @@ const generateChunkedList = (list, chunkSize = 3) => {
     const chunkedList = [];
     const odds = list.filter((_, i) => i % 2 !== 0);
     const even = list.filter((_, i) => i % 2 === 0);
-    const values = odds.map((it, i) => ({ name: it.rawText, value: even[i].rawText }));
+    const values = odds.map((it, i) => ({ name: even[i].rawText, value: it.rawText }));
     for (let i = 0; i < values.length; i += chunkSize) {
         chunkedList.push(values.slice(i, i + chunkSize));
     }
