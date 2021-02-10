@@ -18,7 +18,7 @@ module.exports.sendMail = async (content) => {
         subject: 'New data available',
         text: 'See screenshot attached.',
         attachments: {
-            filename: 'screenshot.png',
+            filename: new Date().toISOString().slice(0, 16) + '.png',
             content,
             cid: '63f28392-6aaf-11eb-9439-0242ac130002-futures-scrap-ho',
         }
