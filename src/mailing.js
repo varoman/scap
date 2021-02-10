@@ -23,6 +23,8 @@ module.exports.sendMail = async (content) => {
             cid: '63f28392-6aaf-11eb-9439-0242ac130002-futures-scrap-ho',
         }
     };
+    
+    console.log(mailOptions, 'mailOptions')
 
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {
