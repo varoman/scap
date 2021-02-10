@@ -2,6 +2,6 @@ const schedule = require('node-schedule');
 const { scrap } = require('./scrap');
 
 
-module.exports.setScheduledJob = () => schedule.scheduleJob('0 59 16 * * *', () => {
+module.exports.setScheduledJob = () => schedule.scheduleJob('0 10 8 * * *', () => {
     scrap();
 });

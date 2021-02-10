@@ -4,7 +4,7 @@ const Handlebars = require('handlebars');
 const fs = require('fs');
 const path = require('path');
 const { sendMail } = require('./mailing');
-const { login_email, login_password } = process.env;
+const { login_email, login_password, web_url, response_url } = process.env;
 
 
 const scrap = async () => {
@@ -12,7 +12,7 @@ const scrap = async () => {
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
     const page = await browser.newPage();
-    await page.goto('https://lk.kinglab.pro/lk/', {waitUntil: 'networkidle0'});
+    await page.goto(web_url, {waitUntil: 'networkidle0'});
 
     await page.type('#user_login', login_email);
     await page.type('#user_pass', login_password);
@@ -24,13 +24,13 @@ const scrap = async () => {
         .catch((e) => console.error(e, 'waitForNavigationError'));
     await page.click('button[type="submit"]')
 
-    const firstResponse = await page.waitForResponse(response => response.url() === 'https://lk.kinglab.pro/wp-content/themes/byblos/bootstrap-custom/trade.php' && response.status() === 200);
-    const secondResponse = await page.waitForResponse(response => response.url() === 'https://lk.kinglab.pro/wp-content/themes/byblos/bootstrap-custom/trade.php' && response.status() === 200);
+    const firstResponse = await page.waitForResponse(response => response.url() === response_url && response.status() === 200);
+    const secondResponse = await page.waitForResponse(response => response.url() === response_url && response.status() === 200);
     const a = await firstResponse.text();
     const b = await secondResponse.text();
 
     const root = parse(a).querySelectorAll('td').length > parse(b).querySelectorAll('td').length ? parse(a) : parse(b);
-    const list = generateList(root.querySelectorAll('td'));
+    const list = generateChunkedList(root.querySelectorAll('td'));
     const templateStr = fs
         .readFileSync(path.resolve(__dirname, 'template.hbs'))
         .toString('utf8')
@@ -52,22 +52,16 @@ const scrap = async () => {
     console.log('finished scrapping...')
 }
 
-const generateList = (trs) => {
+const generateChunkedList = (list, chunkSize = 3) => {
 
-    const valuesSplicedBy3 = [];
-    const odds = trs.filter((_, i) => i % 2 !== 0);
-    const even = trs.filter((_, i) => i % 2 === 0);
+    const chunkedList = [];
+    const odds = list.filter((_, i) => i % 2 !== 0);
+    const even = list.filter((_, i) => i % 2 === 0);
     const values = odds.map((it, i) => ({ name: it.rawText, value: even[i].rawText }));
-    // for (let i = 0; i < trs.length; i += 2) {
-    //     values.push({
-    //         name: trs[i].rawText,
-    //         value: trs[i + 1].rawText,
-    //     });
-    // }
-    for (let i = 0; i < values.length; i += 3) {
-        valuesSplicedBy3.push(values.slice(i, i + 3));
+    for (let i = 0; i < values.length; i += chunkSize) {
+        chunkedList.push(values.slice(i, i + chunkSize));
     }
-    return valuesSplicedBy3;
+    return chunkedList;
 }
 
 
