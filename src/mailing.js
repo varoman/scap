@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const { email, password } = process.env;
+const { email, emails_to, password } = process.env;
 
 
 module.exports.sendMail = async (content) => {
@@ -13,14 +13,14 @@ module.exports.sendMail = async (content) => {
     });
 
     const mailOptions = {
-        from: 'varazdat.manukyan@click2sure.co.za',
-        to: 'varazdat.manukyan@click2sure.co.za, haykohanyans@gmail.com',
+        from: email,
+        to: emails_to,
         subject: 'New data available',
         text: 'See screenshot attached.',
         attachments: {
             filename: 'screenshot.png',
             content,
-            cid: '63f28392-6aaf-11eb-9439-0242ac130002-futures-scrap-ho' // should be as unique as possible
+            cid: '63f28392-6aaf-11eb-9439-0242ac130002-futures-scrap-ho',
         }
     };
 
