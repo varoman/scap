@@ -17,7 +17,8 @@ const scrap = async () => {
     await page.type('#user_login', login_email);
     await page.type('#user_pass', login_password);
 
-    await page.click('#wp-submit');
+    await page.click('#wp-submit')
+        .catch(e => console.error(e, 'wp-submit'));
 
     await page
         .waitForNavigation({ waitUntil: 'networkidle0' })
@@ -49,17 +50,21 @@ const scrap = async () => {
     await sendMail(fileBuffer);
     await browser.close();
 
-    console.log('finished scrapping...')
+    console.log('finished scrapping...');
 }
 
 const generateChunkedList = (list, chunkSize = 3) => {
 
+    const titles = ['Акции', 'Фьючерсы', 'Валюта'];
     const chunkedList = [];
     const odds = list.filter((_, i) => i % 2 !== 0);
     const even = list.filter((_, i) => i % 2 === 0);
     const values = odds.map((it, i) => ({ name: even[i].rawText, value: it.rawText }));
     for (let i = 0; i < values.length; i += chunkSize) {
-        chunkedList.push(values.slice(i, i + chunkSize));
+        chunkedList.push({
+            data: values.slice(i, i + chunkSize),
+            title: titles[chunkedList.length],
+        });
     }
     return chunkedList;
 }
