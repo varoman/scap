@@ -21,9 +21,10 @@
             }
 
             .table-container {
-                margin-top: 150px;
+                height: 100vh;
                 display: flex;
                 justify-content: center;
+                align-items: center;
             }
 
             img {
@@ -31,11 +32,8 @@
             }
 
             table {
-                margin-top: 20px;
-            }
-
-            table {
                 counter-reset: section;
+                margin-top: 5px;
             }
 
             th::before {
@@ -48,11 +46,11 @@
             }
 
             td:nth-child(3) {
-                width: 100px;
+                width: 120px;
             }
 
-            .section {
-                margin-top: 50px;
+            .section:not(:nth-child(1)) {
+                margin-top: 40px;
             }
 
         </style>
