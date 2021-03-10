@@ -12,7 +12,8 @@ const scrap = async () => {
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
     const page = await browser.newPage();
-    await page.goto(web_url, {waitUntil: 'networkidle0'});
+    await page.goto(web_url, {waitUntil: 'networkidle0'})
+        .catch(e => console.error(e, 'page.goto'));
 
     await page.type('#user_login', login_email);
     await page.type('#user_pass', login_password);
